@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Поиск заявок</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+</head>
+<body>
+    <a href="getorders.html">Все заявки</a>
+    <a href="inputorders.html">Создание заявки</a>
+    <a href="updateorders.html">Обновление заявки</a>
+    <a href="stats.html">Статистика по заявкам</a>
+    <a href="findorder.html">Поиск заявки по номеру</a>
+
+    <h3>Поиск по номеру заявки</h3>
+    <input type="number" id="searchByNum" placeholder="Введите номер заявки" />
+    <button onclick="search_by_num()">Найти</button>
+    <div id="resultByNum"></div>
+
+
+    <script>
+        async function search_by_num() {
+            let num = document.getElementById("searchByNum").value;
+            if (!num) {
+                document.getElementById("resultByNum").innerHTML = "Введите номер заявки";
+                return;
+            }
+
+            let response = await fetch(`http://127.0.0.1:8000/findbynum/${num}`);
+            let result = await response.json();
+
+            let resultDiv = document.getElementById("resultByNum");
+            if (typeof result === "string" && result.includes("не найдена")) {
+            } else {
+                resultDiv.innerHTML = `
+
+            
+                <table>
+                    <tr>
+                        <th>Номер заявки</th>
+                        <th>Дата создания</th>
+                        <th>Устройство</th>
+                        <th>Описание проблемы</th>
+                        <th>Тип проблемы</th>
+                        <th>Клиент</th>
+                        <th>Статус</th>
+                        <th>Мастер</th>
+                        <th>Дата окончания</th>
+                        <th>Комментарий мастера</th>
+                    </tr>
+                    <tr>
+                        <td>${result.num}</td>
+                        <td>${result.add_date}</td>
+                        <td>${result.device}</td>
+                        <td>${result.problem_description}</td>
+                        <td>${result.problem_type}</td>
+                        <td>${result.client}</td>
+                        <td>${result.status}</td>
+                        <td>${result.master}</td>
+                        <td>${result.end_date}</td>
+                        <td>${result.master_comment}</td>
+                    </tr>
+                </table>`;
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обновление заявки</title>
+</head>
+<body>
+    <a href="getorders.html">Все заявки</a>
+    <a href="inputorders.html">Создание заявки</a>
+    <a href="updateorders.html">Обновление заявки</a>
+    <a href="stats.html">Статистика по заявкам</a>
+    <a href="findorder.html">Поиск заявки по номеру</a>
+
+    <form id="updateOrder">
+        <input required placeholder="Номер" type="number" name="num" />
+        <input required placeholder="Описание проблемы" type="text" name="problem_type" />
+        <select name="status">
+            <option value="">Выберите статус</option>
+            <option value="done">Выполнено</option>
+            <option value="in progress">В процессе</option>
+            <option value="not started">Не начато</option>
+        </select>
+        <input required placeholder="Мастер" type="text" name="master" />
+        <input required placeholder="Комментарий мастера" type="text" name="master_comment" />
+        <button type="button" onclick="submitUpdate()">Изменить заявку</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script>
+        async function submitUpdate() {
+            const formData = new FormData(document.getElementById('updateOrder'));
+            const data = Object.fromEntries([...formData.entries()].filter(([_, value]) => value.trim() !== ""));
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/update", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    document.getElementById('message').textContent = "Заявка изменена";
+                    document.getElementById('updateOrder').reset();
+                } else {
+                    document.getElementById('message').textContent = "Ошибка";
+                }
+            } catch (err) {
+                document.getElementById('message').textContent = "Ошибка";
+            }
+        }
+    </script>
+</body>
+</html>
